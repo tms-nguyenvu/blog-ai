@@ -1,0 +1,34 @@
+$  npx sequelize-cli model:create  --name User  --attributes username:string,email:string
+
+$  npx sequelize-cli migration:generate --name add-password-to-user
+
+npx sequelize-cli db:migrate
+
+
+
+Professional/Formal:
+Sử dụng ngôn ngữ trang trọng, chính xác, phù hợp với môi trường doanh nghiệp, báo cáo, và tài liệu chuyên môn.
+
+Casual/Informal:
+Ngôn ngữ thân thiện, gần gũi, sử dụng cách diễn đạt tự nhiên như khi trò chuyện hàng ngày.
+
+Conversational:
+Phong cách đối thoại, dễ hiểu, tạo cảm giác như đang trao đổi trực tiếp với độc giả.
+
+Humorous/Witty:
+Sử dụng sự dí dỏm, hài hước, tạo không khí vui vẻ cho bài viết.
+
+Narrative/Storytelling:
+Kể chuyện, có cấu trúc rõ ràng, sử dụng cách kể chuyện để thu hút độc giả.
+
+Technical/Analytical:
+Chi tiết, chuyên sâu, tập trung vào dữ liệu, số liệu và các khía cạnh kỹ thuật của nội dung.
+
+Persuasive/Marketing:
+Phong cách thuyết phục, tập trung vào việc quảng bá, kích thích hành động hoặc tạo cảm hứng cho độc giả.
+
+Inspirational/Motivational:
+Mang tính khích lệ, động viên, truyền cảm hứng, thường sử dụng ngôn từ tích cực và lạc quan.
+
+Creative/Imaginative:
+Sáng tạo, độc đáo, có thể sử dụng ngôn từ phong phú và bất ngờ để tạo nên một nội dung mới mẻ.
