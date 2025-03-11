@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       title: DataTypes.STRING,
+      normalized_title: DataTypes.STRING,
       content: DataTypes.TEXT,
       source_url: DataTypes.STRING,
       style: DataTypes.STRING,

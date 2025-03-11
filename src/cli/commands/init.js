@@ -41,33 +41,6 @@ module.exports = (program) => {
         spinner.text = "Synchronizing database tables...";
         await syncDatabase(options.force);
 
-        // Create default categories if they don't exist
-        // const Category = require("../../models/category");
-        // const defaultCategories = [
-        //   {
-        //     name: "General",
-        //     slug: "general",
-        //     description: "Default category",
-        //   },
-        //   {
-        //     name: "Technology",
-        //     slug: "technology",
-        //     description: "Articles about technology",
-        //   },
-        //   {
-        //     name: "Travel",
-        //     slug: "travel",
-        //     description: "Articles about travel",
-        //   },
-        // ];
-
-        // for (const cat of defaultCategories) {
-        //   await Category.findOrCreate({
-        //     where: { slug: cat.slug },
-        //     defaults: cat,
-        //   });
-        // }
-
         spinner.succeed(chalk.green("System initialized successfully!"));
 
         console.log("\nTo start using the system, try the following command:");

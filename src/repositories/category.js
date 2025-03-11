@@ -75,7 +75,6 @@ class CategoryRepository {
     if (keyword) {
       query.name = { [Op.iLike]: `%${keyword}%` };
     }
-    console.log(keyword);
 
     const queries = {
       offset: (page - 1) * limit,
