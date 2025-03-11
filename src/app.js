@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const compression = require("compression");
+const createError = require("http-errors");
 const app = express();
 
 // Load environment variables
@@ -15,6 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Connect to PostgreSQL
 require("./config/connect.db").initDatabase();
+
+// Import routes
+app.use("/", require("./routers"));
 
 // Error handler
 app.use((req, res, next) => {
