@@ -14,6 +14,10 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Rate limit
+const rateLimit = require("./middlewares/ratelimit");
+app.use(rateLimit);
+
 // Connect to PostgreSQL
 require("./config/connect.db").initDatabase();
 
