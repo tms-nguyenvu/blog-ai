@@ -13,7 +13,7 @@ class CategoryRepository {
    * @returns {Promise<Object|null>} The category or null if not found.
    */
   static async findCategoryBySlug(slug) {
-    return await Category.findOne({ where: { slug } });
+    return Category.findOne({ where: { slug } });
   }
 
   /**
@@ -22,7 +22,7 @@ class CategoryRepository {
    * @returns {Promise<Object>} The created category.
    */
   static async createCategory(payload) {
-    return await Category.create(payload);
+    return Category.create(payload);
   }
 
   /**
@@ -31,7 +31,7 @@ class CategoryRepository {
    * @returns {Promise<Object|null>} The category or null if not found.
    */
   static async findCategoryById(id) {
-    return await Category.findByPk(id);
+    return Category.findByPk(id);
   }
 
   /**
@@ -45,7 +45,7 @@ class CategoryRepository {
 
     if (!updatedCount) return null;
 
-    return await Category.findByPk(id);
+    return Category.findByPk(id);
   }
 
   /**

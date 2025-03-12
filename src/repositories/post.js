@@ -13,7 +13,7 @@ class PostRepository {
    * @returns {Promise<Object>} The created post.
    */
   static async createPost(payload) {
-    return await Post.create(payload);
+    return Post.create(payload);
   }
 
   /**
@@ -53,7 +53,7 @@ class PostRepository {
    * @returns {Promise<Object|null>} The post or null if not found.
    */
   static async findPostById(id) {
-    return await Post.findByPk(id);
+    return Post.findByPk(id);
   }
 
   /**
@@ -67,7 +67,7 @@ class PostRepository {
 
     if (!updatedCount) return null;
 
-    return await Post.findByPk(id);
+    return Post.findByPk(id);
   }
 
   /**
