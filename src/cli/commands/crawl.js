@@ -86,7 +86,9 @@ module.exports = (program) => {
           console.log(rewrittenContent);
         }
         spinner.succeed(chalk.green("Content crawled successfully!"));
+        process.exit(0);
       } catch (error) {
+        console.log(error);
         logger.error("Error crawling content:", error.message);
         spinner.fail(chalk.red("Error crawling content:"), error.message);
       }

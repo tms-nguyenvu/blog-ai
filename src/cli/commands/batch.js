@@ -51,12 +51,11 @@ module.exports = (program) => {
             let categoryData = await Category.findOne({
               where: { name: category },
             });
-            let finalSlug = generateSlug(category);
 
             if (!categoryData) {
               categoryData = await Category.create({
                 name: category,
-                slug: finalSlug,
+                slug: generateSlug(category),
               });
             } else {
               categoryData = categoryData.toJSON();
@@ -115,6 +114,7 @@ module.exports = (program) => {
             }
           }
           spinner.succeed(chalk.green("Batch processing completed!"));
+          process.exit(0);
         });
     });
 };

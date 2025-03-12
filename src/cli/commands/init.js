@@ -45,10 +45,11 @@ module.exports = (program) => {
 
         console.log("\nTo start using the system, try the following command:");
         console.log(
-          `  ${chalk.cyan("bloggen crawl")} ${chalk.yellow(
+          `  ${chalk.cyan("npm run cli -- crawl")} ${chalk.yellow(
             "<url>"
           )} ${chalk.green('--style="professional" --category="technology"')}`
         );
+        process.exit(0);
       } catch (error) {
         spinner.fail(chalk.red(`Error initializing system: ${error.message}`));
         logger.error("Init command failed:", error);

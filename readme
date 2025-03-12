@@ -56,5 +56,5 @@ npm run cli -- crawl https://sequelize.org/docs/v6/core-concepts/model-querying-
 npm run cli -- batch /home/vu/Documents/nodejs-postgres/data/csv/urls.csv --no-save
 npm run cli -- list
 npm run cli -- export --format="md" --output="/home/vu/Documents/nodejs-postgres/data/exports"
-npm run cli -- schedule --cron="*/5 * * * *" --csv="/path/to/urls.csv"
+npm run cli -- schedule --cron="*/5 * * * *" --csv="/home/vu/Documents/nodejs-postgres/data/csv/urls.csv"
 

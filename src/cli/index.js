@@ -9,6 +9,7 @@ const crawlCommand = require("./commands/crawl");
 const batchCommand = require("./commands/batch");
 const listCommand = require("./commands/list");
 const exportCommand = require("./commands/export");
+const scheduleCommand = require("./commands/schedule");
 
 // Set up the program
 program
@@ -22,6 +23,7 @@ crawlCommand(program);
 batchCommand(program);
 listCommand(program);
 exportCommand(program);
+scheduleCommand(program);
 
 // Handle unknown commands
 program.on("command:*", () => {
