@@ -4,11 +4,36 @@ const removeDiacritics = require("remove-accents");
 const PostRepository = require("../repositories/post");
 const postValidate = require("../validators/post");
 const CategoryRepository = require("../repositories/category");
+const { initRedis } = require("../config/redis");
 
 /**
  * Service class for managing posts.
  */
 class PostService {
+  static redisClient = null;
+
+  static async getRedisClient() {
+    if (!this.redisClient) {
+      this.redisClient = await initRedis();
+    }
+    return this.redisClient;
+  }
+
+  static async invalidatePostCache(post_id = null) {
+    const redisClient = await this.getRedisClient();
+
+    for await (const key of redisClient.scanIterator({
+      MATCH: "posts:*",
+      COUNT: 1000,
+    })) {
+      await redisClient.del(key);
+    }
+
+    if (post_id) {
+      await redisClient.del(`post:${post_id}`);
+    }
+  }
+
   /**
    * Creates a new post.
    * @param {Object} payload - The post data.
@@ -32,6 +57,10 @@ class PostService {
     }
 
     const post = await PostRepository.createPost(payload);
+
+    // Invalidate cache after create post
+    await this.invalidatePostCache();
+
     return post;
   }
 
@@ -53,12 +82,25 @@ class PostService {
       sortby = "asc",
       keyword,
     } = query;
+
+    const redisClient = await this.getRedisClient();
+    const cacheKey = `posts:${page}-${limit}-${orderby}-${sortby}-${keyword}`;
+    const cachedPosts = await redisClient.get(cacheKey);
+
+    if (cachedPosts) {
+      return JSON.parse(cachedPosts);
+    }
+
     const posts = await PostRepository.findAllPost({
-      page: +page ? +page : 1,
-      limit: +limit ? +limit : 1,
+      page: isNaN(parseInt(page)) || page <= 0 ? 1 : parseInt(page),
+      limit: isNaN(parseInt(limit)) || limit <= 0 ? 10 : parseInt(limit),
       orderby: orderby,
       sortby: sortby,
       keyword: keyword,
+    });
+
+    await redisClient.set(cacheKey, JSON.stringify(posts), {
+      EX: 60,
     });
     return posts;
   }
@@ -70,8 +112,18 @@ class PostService {
    * @throws {createHttpError.NotFound} If the post is not found.
    */
   static async getPostById(id) {
+    const redisClient = await this.getRedisClient();
+    const cacheKey = `post:${id}`;
+    const cachedPost = await redisClient.get(cacheKey);
+
+    if (cachedPost) return JSON.parse(cachedPost);
+
     const post = await PostRepository.findPostById(id);
     if (!post) throw createHttpError.NotFound("Post not found");
+
+    await redisClient.set(cacheKey, JSON.stringify(post), {
+      EX: 300,
+    });
     return post;
   }
 
@@ -98,6 +150,9 @@ class PostService {
       existingPost?.id,
       payload
     );
+
+    // Invalidate cache after update post
+    await this.invalidatePostCache(id);
     return updatedPost;
   }
 
@@ -111,7 +166,10 @@ class PostService {
     const existingPost = await PostRepository.findPostById(id);
     if (!existingPost) throw createHttpError.NotFound("Post not found");
 
+    // Invalidate cache after delete post
+
     await PostRepository.deletePost(id);
+    await this.invalidatePostCache(id);
   }
 }
 
