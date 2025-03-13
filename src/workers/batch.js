@@ -6,6 +6,7 @@ const crawler = require("../services/crawler");
 const categoryValidate = require("../validators/category");
 const generatePrompt = require("../utils/prompt");
 const aiRewriter = require("../services/ai.rewriter");
+const history = require("../utils/history");
 
 const processRow = async (row, save) => {
   const { URL, Category: category, Style: style } = row;
@@ -38,7 +39,7 @@ const processRow = async (row, save) => {
 
     const prompt = generatePrompt(originalContent, category, style);
 
-    const rewrittenContent = await aiRewriter.generateResponse(prompt);
+    const rewrittenContent = await aiRewriter.generateResponse(prompt, history);
 
     if (save) {
       // Save content to database

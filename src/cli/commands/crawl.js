@@ -5,6 +5,7 @@ const categoryValidate = require("../../validators/category");
 const crawler = require("../../services/crawler");
 const removeDiacritics = require("remove-accents");
 const generatePrompt = require("../../utils/prompt");
+const history = require("../../utils/history");
 const { logger } = require("../../utils/logger");
 const { Category, Post } = require("../../models");
 const { generateSlug } = require("../../utils/util");
@@ -48,6 +49,7 @@ module.exports = (program) => {
       try {
         // Crawl original content using Puppeteer (in your crawler module)
         const originalContent = await crawler.crawl(url);
+
         if (!originalContent) {
           console.log(chalk.red("No content found on the page."));
           return;
@@ -59,7 +61,10 @@ module.exports = (program) => {
         const prompt = generatePrompt(originalContent, category, style);
 
         // Generate rewritten content using AI rewriter
-        const rewrittenContent = await aiRewriter.generateResponse(prompt);
+        const rewrittenContent = await aiRewriter.generateResponse(
+          prompt,
+          history
+        );
 
         if (save) {
           const cleanContent = rewrittenContent.replace(/<\/?[^>]+(>|$)/g, "");
