@@ -3,6 +3,7 @@ const ora = require("ora").default;
 const fs = require("fs");
 const csv = require("csv-parser");
 const { Worker } = require("worker_threads");
+const { MAX_CONCURRENT_WORKERS } = require("../../constants");
 
 module.exports = (program) => {
   program
@@ -28,34 +29,49 @@ module.exports = (program) => {
           }
         })
         .on("end", async () => {
-          const workerPromises = rows.map((row) => {
-            return new Promise((resolve, reject) => {
-              const worker = new Worker("./src/workers/batch.js", {
-                workerData: { row, save },
+          const results = [];
+          let index = 0;
+
+          const processBatch = async () => {
+            while (index < rows.length) {
+              const batch = rows.slice(index, index + MAX_CONCURRENT_WORKERS);
+
+              index += batch.length;
+
+              const workerPromises = batch.map((row) => {
+                return new Promise((resolve, reject) => {
+                  const worker = new Worker("./src/workers/batch.js", {
+                    workerData: { row, save },
+                  });
+                  worker.on("message", resolve);
+                  worker.on("error", reject);
+                  worker.on("exit", (code) => {
+                    if (code !== 0) {
+                      reject(
+                        new Error(`Worker stopped with exit code ${code}`)
+                      );
+                    }
+                  });
+                });
               });
-              worker.on("message", resolve);
-              worker.on("error", reject);
-              worker.on("exit", (code) => {
-                if (code != 0) {
-                  reject(new Error(`Worker stopped with exit code ${code}`));
-                }
-              });
-            });
+
+              const batchResults = await Promise.allSettled(workerPromises);
+              results.push(...batchResults);
+            }
+          };
+
+          await processBatch();
+
+          results.forEach((result) => {
+            if (result.status === "fulfilled") {
+              console.log(chalk.green(result.value?.message || "Success"));
+            } else {
+              console.log(
+                chalk.red(result.reason?.message || "Error occurred")
+              );
+            }
           });
 
-          try {
-            const results = await Promise.all(workerPromises);
-
-            results.forEach((result) => {
-              if (result.error) {
-                console.log(chalk.red(result.error));
-              } else {
-                console.log(chalk.green(result.message));
-              }
-            });
-          } catch (error) {
-            console.log(chalk.red("Error processing batch", error.message));
-          }
           spinner.succeed(chalk.green("Batch processing completed!"));
           process.exit(0);
         });
