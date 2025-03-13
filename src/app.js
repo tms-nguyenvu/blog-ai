@@ -21,6 +21,9 @@ app.use(require("./middlewares/ratelimit"));
 // Connect to PostgreSQL
 require("./config/connect.db").initDatabase();
 
+// Connect to Redis
+require("./config/redis").initRedis();
+
 // Import routes
 app.use("/", require("./routers"));
 

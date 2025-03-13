@@ -9,6 +9,7 @@ const history = require("../../utils/history");
 const { logger } = require("../../utils/logger");
 const { Category, Post } = require("../../models");
 const { generateSlug } = require("../../utils/util");
+const { initRedis } = require("../../config/redis");
 
 module.exports = (program) => {
   program
@@ -19,6 +20,12 @@ module.exports = (program) => {
     .option("--save", "Save blog in database")
     .option("--no-save", "Do not save blog in database")
     .action(async (url, options) => {
+      const redisClient = await initRedis();
+
+      const cacheKey = `url:${url}`;
+
+      const cachedData = await redisClient.get(cacheKey);
+
       const { style, category, save } = options;
 
       // Validate category input
@@ -60,11 +67,16 @@ module.exports = (program) => {
         // Generate prompt for AI rewriter
         const prompt = generatePrompt(originalContent, category, style);
 
-        // Generate rewritten content using AI rewriter
-        const rewrittenContent = await aiRewriter.generateResponse(
-          prompt,
-          history
-        );
+        let rewrittenContent;
+        if (cachedData) {
+          rewrittenContent = JSON.parse(cachedData);
+        } else {
+          // Generate rewritten content using AI rewriter
+          rewrittenContent = await aiRewriter.generateResponse(prompt, history);
+          await redisClient.set(cacheKey, JSON.stringify(rewrittenContent), {
+            EX: 300,
+          });
+        }
 
         if (save) {
           const cleanContent = rewrittenContent.replace(/<\/?[^>]+(>|$)/g, "");
