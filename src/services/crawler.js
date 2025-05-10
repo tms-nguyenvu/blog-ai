@@ -20,8 +20,19 @@ class PuppeteerCrawler {
     await this.init();
     const page = await this.browser.newPage();
 
+    await page.setCacheEnabled(false);
+
+    const client = await page.target().createCDPSession();
+    await client.send("Network.clearBrowserCookies");
+    await client.send("Network.clearBrowserCache");
+
+    const randomParam = `nocache=${Date.now()}`;
+    const urlWithRandom = url.includes("?")
+      ? `${url}&${randomParam}`
+      : `${url}?${randomParam}`;
+
     try {
-      await page.goto(url, { waitUntil: "networkidle2", timeout: 0 });
+      await page.goto(urlWithRandom, { waitUntil: "networkidle2", timeout: 0 });
 
       const content = await page.evaluate(() => {
         const article = document.querySelector("article");

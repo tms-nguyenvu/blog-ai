@@ -6,6 +6,10 @@ require("dotenv").config();
 // Import commands
 const initCommand = require("./commands/init");
 const crawlCommand = require("./commands/crawl");
+const batchCommand = require("./commands/batch");
+const listCommand = require("./commands/list");
+const exportCommand = require("./commands/export");
+const scheduleCommand = require("./commands/schedule");
 
 // Set up the program
 program
@@ -16,6 +20,10 @@ program
 // Register commands
 initCommand(program);
 crawlCommand(program);
+batchCommand(program);
+listCommand(program);
+exportCommand(program);
+scheduleCommand(program);
 
 // Handle unknown commands
 program.on("command:*", () => {

@@ -32,3 +32,29 @@ Mang tính khích lệ, động viên, truyền cảm hứng, thường sử d�
 
 Creative/Imaginative:
 Sáng tạo, độc đáo, có thể sử dụng ngôn từ phong phú và bất ngờ để tạo nên một nội dung mới mẻ.
+
+
+
+Example:
+
+--Crawl Data:
+node src/cli/index.js crawl https://sequelize.org/docs/v6/core-concepts/model-querying-basics/#operators --style="Technical" --category="tech"
+
+--Batch Data:
+node src/cli/index.js batch /home/vu/Documents/nodejs-postgres/data/csv/urls.csv --no-save
+
+--Export Data:
+node src/cli/index.js export --format="md" --output="/home/vu/Documents/nodejs-postgres/data/exports"
+
+--List Data:
+node src/cli/index.js list
+
+
+
+npm run cli -- init
+npm run cli -- crawl https://sequelize.org/docs/v6/core-concepts/model-querying-basics/#operators --style="Technical" --category="tech" --no-save
+npm run cli -- batch /home/vu/Documents/nodejs-postgres/data/csv/urls.csv --no-save
+npm run cli -- list
+npm run cli -- export --format="md" --output="/home/vu/Documents/nodejs-postgres/data/exports"
+npm run cli -- schedule --cron="*/5 * * * *" --csv="/home/vu/Documents/nodejs-postgres/data/csv/urls.csv"
+

@@ -1,0 +1,3 @@
+const MAX_CONCURRENT_WORKERS = 4;
+
+module.exports = { MAX_CONCURRENT_WORKERS };
